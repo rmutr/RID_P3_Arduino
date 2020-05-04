@@ -1,53 +1,80 @@
 #include <Arduino.h>
 
-char str_buf[200] = {0}; 
-unsigned int cnt; 
+#include <SPI.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-//unsigned int pin = 36; 
-//unsigned int pin = 39; 
-//unsigned int pin = 34; 
-//unsigned int pin = 35; 
-//unsigned int pin = 32; 
-//unsigned int pin = 33; 
-//unsigned int pin = 25; 
-//unsigned int pin = 26; 
-//unsigned int pin = 27; 
-//unsigned int pin = 14; 
-//unsigned int pin = 12; 
-//unsigned int pin = 13; 
-//unsigned int pin =  9; // Bug 
-  unsigned int pin = 10; 
-//unsigned int pin = 11; // Bug 
+#define PIN_RX_0             3 
+#define PIN_TX_0             1 
+#define PIN_RX_1            16 
+#define PIN_TX_1            17 
 
-//unsigned int pin = 23; 
-//unsigned int pin = 22; 
-//unsigned int pin =  1; // Rx 
-//unsigned int pin =  3; // Tx 
-//unsigned int pin = 21; 
-//unsigned int pin = 19; 
-//unsigned int pin = 18; 
-//unsigned int pin =  5; 
-//unsigned int pin = 17; 
-//unsigned int pin = 16; 
-//unsigned int pin =  4; 
-//unsigned int pin =  0; 
-//unsigned int pin =  2; 
-//unsigned int pin = 15; 
-//unsigned int pin =  8; // Bug 
-//unsigned int pin =  7; // Bug 
-//unsigned int pin =  6; // Bug 
+char buff_str[200] = {0}; 
+unsigned long t_old = 0; 
+int tmr_cnt = 0; 
 
+int status_process = 0; 
+int status_process_mon = 0; 
+int error = 0; 
+
+//------------------------------------------------------ 
+#define SCREEN_WIDTH       128 
+#define SCREEN_HEIGHT       64 
+#define OLED_RESET           4 
+#define GLCD_LINE_1         20 
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+#define GLCD_LINE_0          5 
+#define GLCD_LINE_1         20 
+#define GLCD_LINE_2         35 
+#define GLCD_LINE_3         50 
+
+
+
+
+
+//------------------------------------------------------ 
 void setup() { 
-  Serial.begin(115200); 
+  Serial.begin (115200, SERIAL_8N1, PIN_RX_0, PIN_TX_0); 
+  Serial1.begin(115200, SERIAL_8N1, PIN_RX_1, PIN_TX_1); 
 
-  pinMode(pin, INPUT);
+  Serial.println("RID Project 2");
+
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { 
+    Serial.println(F("SSD1306 allocation failed")); 
+    for(;;); // Don't proceed, loop forever 
+  } 
+
+  display.setTextSize(1); 
+  display.setTextColor(WHITE); 
+
+  display.clearDisplay(); 
+  display.setCursor(0, GLCD_LINE_0); 
+  display.println(F("RID Project 2")); 
+  display.display(); 
+
+//------------------------------------------------------ 
+  tmr_cnt = 0; 
+  status_process = 0; 
+  status_process_mon = 0; 
+  error = 0; 
+
 } 
 
 void loop() { 
-  Serial.print(digitalRead(pin));
-  sprintf(str_buf, " %030d ", cnt);
-  Serial.println(str_buf); 
-  cnt++; if (cnt >= 10) { cnt = 0; } 
-  delay(1000); 
-} 
+  sprintf(buff_str, "tmr_cnt = %2d ", tmr_cnt); 
 
+  Serial.println(buff_str); 
+
+  display.clearDisplay(); 
+  display.setCursor(0, GLCD_LINE_0); 
+  display.println(F("RID Project 2")); 
+  display.setCursor(0, GLCD_LINE_2); 
+  display.println(F(buff_str)); 
+  display.display(); 
+
+  while ((micros() - t_old) < 100000L); t_old = micros(); 
+  tmr_cnt++; if (tmr_cnt >= 10) { tmr_cnt = 0; } 
+} 
