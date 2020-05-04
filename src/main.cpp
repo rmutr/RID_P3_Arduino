@@ -253,7 +253,7 @@ void loop() {
     if (state_ix_mon != 2) { 
       sprintf(buff_str, "Cnt %6lu /%3ds", p_total, p_buff_use); 
     } else { 
-      sprintf(buff_str, "Cnt %6lu /%3ds", p_total, p_buff_ix); 
+      sprintf(buff_str, "Cnt %6lu /%3lus", p_total, p_buff_ix); 
     } 
 
     Serial.print(buff_str); 
@@ -261,7 +261,7 @@ void loop() {
     if (state_ix_mon != 2) { 
       sprintf(buff_str, "Cnt %6lu /%ds  ", p_total, p_buff_use); 
     } else { 
-      sprintf(buff_str, "Cnt %6lu /%ds  ", p_total, p_buff_ix); 
+      sprintf(buff_str, "Cnt %6lu /%lus  ", p_total, p_buff_ix); 
     } 
 
     clcd.setCursor(0, CLCD_LINE_0); 
