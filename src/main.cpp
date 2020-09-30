@@ -239,7 +239,11 @@ void loop() {
       } 
       break; 
 
-    case 3: //<- Hold 
+    case 3: //<- Add Log to Firebase 
+
+      break; 
+
+    case 4: //<- Hold 
       break; 
   } 
 
